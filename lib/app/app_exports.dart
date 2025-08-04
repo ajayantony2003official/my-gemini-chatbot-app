@@ -4,3 +4,6 @@ export 'package:get/get.dart';
 export 'package:my_chat_app/app/routes/app_routes.dart';
 export 'package:my_chat_app/app/routes/app_pages.dart';
 export 'package:flutter_dotenv/flutter_dotenv.dart';
+export 'package:my_chat_app/app/core/base/controllers/base_controller.dart';
+export 'package:my_chat_app/app/shared/constants/gemini_constants.dart';
+export 'dart:convert';
