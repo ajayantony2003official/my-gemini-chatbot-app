@@ -8,4 +8,8 @@ class SendMessageUseCase {
   Future<ApiResponse<GeminiResponse>> call(String prompt) {
     return repository.sendMessage(prompt);
   }
+
+  Stream<String> callStream(String prompt) {
+    return repository.streamMessage(prompt);
+  }
 }

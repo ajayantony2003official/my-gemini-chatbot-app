@@ -8,9 +8,19 @@ class ChatView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<ChatController>();
     final TextEditingController inputController = TextEditingController();
+    final ScrollController scrollController = ScrollController();
+
+    // Helper function to handle message sending
+    void handleSendMessage() {
+      final prompt = inputController.text.trim();
+      if (prompt.isNotEmpty) {
+        controller.sendMessage(prompt);
+        inputController.clear();
+      }
+    }
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(64),
         child: Container(
@@ -22,7 +32,7 @@ class ChatView extends StatelessWidget {
             backgroundColor: Colors.transparent,
             elevation: 0,
             title: const Text(
-              'Chat',
+              'AI powered Chat-Bot',
               style: TextStyle(
                 color: Colors.black87,
                 fontWeight: FontWeight.bold,
@@ -41,7 +51,21 @@ class ChatView extends StatelessWidget {
         children: [
           Expanded(
             child: Obx(() {
+              // Scroll to bottom only when new message is added
+              if (controller.chatMessages.isNotEmpty) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (scrollController.hasClients) {
+                    scrollController.animateTo(
+                      scrollController.position.maxScrollExtent,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOut,
+                    );
+                  }
+                });
+              }
+
               return ListView.builder(
+                controller: scrollController,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 12,
@@ -49,43 +73,22 @@ class ChatView extends StatelessWidget {
                 itemCount: controller.chatMessages.length,
                 itemBuilder: (context, index) {
                   final message = controller.chatMessages[index];
-                  final isUser = message.isUser;
-
-                  return Align(
-                    alignment: isUser
-                        ? Alignment.centerRight
-                        : Alignment.centerLeft,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 4),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 10,
-                      ),
-                      constraints: BoxConstraints(
-                        maxWidth: MediaQuery.of(context).size.width * 0.75,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isUser ? Colors.blue : Colors.grey[300],
-                        borderRadius: BorderRadius.only(
-                          topLeft: const Radius.circular(16),
-                          topRight: const Radius.circular(16),
-                          bottomLeft: Radius.circular(isUser ? 16 : 0),
-                          bottomRight: Radius.circular(isUser ? 0 : 16),
-                        ),
-                      ),
-                      child: Text(
-                        message.message,
-                        style: TextStyle(
-                          color: isUser ? Colors.white : Colors.black87,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                  );
+                  return MessageBubble(message: message);
                 },
               );
             }),
           ),
+
+          // Loading indicator
+          Obx(() {
+            return Visibility(
+              visible: controller.isLoading.value,
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }),
 
           /// Bottom Input Area
           Container(
@@ -116,6 +119,7 @@ class ChatView extends StatelessWidget {
                         hintText: 'Type a message...',
                         border: InputBorder.none,
                       ),
+                      onSubmitted: (_) => handleSendMessage(),
                     ),
                   ),
                 ),
@@ -127,19 +131,59 @@ class ChatView extends StatelessWidget {
                   ),
                   child: IconButton(
                     icon: const Icon(Icons.send, color: Colors.white),
-                    onPressed: () async {
-                      final prompt = inputController.text.trim();
-                      if (prompt.isNotEmpty) {
-                        controller.sendMessage(prompt);
-                        inputController.clear();
-                      }
-                    },
+                    onPressed: handleSendMessage,
                   ),
                 ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// Extract MessageBubble widget
+class MessageBubble extends StatelessWidget {
+  final ChatMessageEntity message;
+
+  const MessageBubble({
+    super.key,
+    required this.message,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isUser = message.isUser;
+
+    return Align(
+      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 10,
+        ),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.75,
+        ),
+        decoration: BoxDecoration(
+          color: isUser ? Colors.blue : Colors.grey[300],
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(16),
+            topRight: const Radius.circular(16),
+            bottomLeft: Radius.circular(isUser ? 16 : 0),
+            bottomRight: Radius.circular(isUser ? 0 : 16),
+          ),
+        ),
+        child: Text(
+          message.message,
+          style: TextStyle(
+            color: isUser ? Colors.white : Colors.black87,
+            fontSize: 15,
+          ),
+          softWrap: true,
+        ),
       ),
     );
   }

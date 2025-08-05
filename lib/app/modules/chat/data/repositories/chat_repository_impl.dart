@@ -19,4 +19,9 @@ class ChatRepositoryImpl implements ChatRepository {
       return ApiResponse.error('Repository error: $e');
     }
   }
+
+  @override
+  Stream<String> streamMessage(String message) {
+    return dataSource.streamMessage(message);
+  }
 }

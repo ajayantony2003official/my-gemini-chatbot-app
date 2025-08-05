@@ -2,6 +2,7 @@ import 'package:my_chat_app/app/modules/chat/chat_exports.dart';
 
 abstract class ChatRemoteDataSource {
   Future<ApiResponse<GeminiResponseModel>> sendMessage(String message);
+  Stream<String> streamMessage(String message);
 }
 
 class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
@@ -21,5 +22,10 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     } else {
       return ApiResponse.error(response.error ?? "Unknown error");
     }
+  }
+
+  @override
+  Stream<String> streamMessage(String message) {
+    return apiClient.sendToGeminiStream(message);
   }
 }

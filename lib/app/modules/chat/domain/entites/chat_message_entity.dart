@@ -1,5 +1,5 @@
 class ChatMessageEntity {
-  final String message;
+  String message;
   final bool isUser;
   final DateTime timestamp;
 

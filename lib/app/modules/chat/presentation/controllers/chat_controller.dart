@@ -22,14 +22,22 @@ class ChatController extends BaseController {
       try {
         final result = await sendMessageUseCase(prompt);
         if (result.isSuccess) {
-          // Add AI response to chat
-          chatMessages.add(
-            ChatMessageEntity(
-              message: result.data!.text,
-              isUser: false,
-              timestamp: DateTime.now(),
-            ),
+          final responseText = result.data!.text.trim();
+
+          // Add placeholder first
+          final aiMessage = ChatMessageEntity(
+            message: "",
+            isUser: false,
+            timestamp: DateTime.now(),
           );
+          chatMessages.add(aiMessage);
+
+          // Animate letter by letter
+          for (int i = 0; i < responseText.length; i++) {
+            await Future.delayed(const Duration(milliseconds: 15));
+            aiMessage.message += responseText[i];
+            chatMessages.refresh();
+          }
         } else {
           Get.snackbar('Error', result.error ?? 'Unknown error');
         }
