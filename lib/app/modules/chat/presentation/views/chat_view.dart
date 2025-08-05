@@ -94,7 +94,7 @@ class ChatView extends StatelessWidget {
           Container(
             width: double.infinity,
             decoration: const BoxDecoration(
-              color: Colors.white,
+              color:  Colors.white,
               borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
             ),
             padding: EdgeInsets.only(
@@ -109,7 +109,7 @@ class ChatView extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
-                      color: Colors.grey[100],
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(25),
                     ),
                     child: TextField(
@@ -147,10 +147,7 @@ class ChatView extends StatelessWidget {
 class MessageBubble extends StatelessWidget {
   final ChatMessageEntity message;
 
-  const MessageBubble({
-    super.key,
-    required this.message,
-  });
+  const MessageBubble({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -160,15 +157,12 @@ class MessageBubble extends StatelessWidget {
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 10,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.75,
         ),
         decoration: BoxDecoration(
-          color: isUser ? Colors.blue : Colors.grey[300],
+          color: isUser ? Colors.blueAccent :Colors.grey[100],
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(16),
             topRight: const Radius.circular(16),

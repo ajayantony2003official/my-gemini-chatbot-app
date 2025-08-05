@@ -10,6 +10,8 @@ class ChatController extends BaseController {
 
   Future<void> sendMessage(String prompt) async {
     await runWithLoading(() async {
+      showLoading();
+
       // Add user's message to chat
       chatMessages.add(
         ChatMessageEntity(
@@ -20,7 +22,10 @@ class ChatController extends BaseController {
       );
 
       try {
-        final result = await sendMessageUseCase(prompt);
+        final result = await sendMessageUseCase(chatMessages);
+        
+        hideLoading(); // ✅ Hide as soon as response is received
+
         if (result.isSuccess) {
           final responseText = result.data!.text.trim();
 

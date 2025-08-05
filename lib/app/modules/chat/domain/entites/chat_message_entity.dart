@@ -8,4 +8,13 @@ class ChatMessageEntity {
     required this.isUser,
     required this.timestamp,
   });
+
+  Map<String, dynamic> toGeminiMap() {
+    return {
+      "role": isUser ? "user" : "model",
+      "parts": [
+        {"text": message}
+      ],
+    };
+  }
 }

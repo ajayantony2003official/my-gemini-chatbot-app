@@ -5,9 +5,9 @@ class ChatRepositoryImpl implements ChatRepository {
   ChatRepositoryImpl(this.dataSource);
 
   @override
-  Future<ApiResponse<GeminiResponse>> sendMessage(String prompt) async {
+  Future<ApiResponse<GeminiResponse>> sendMessage(List<ChatMessageEntity> messages) async {
     try {
-      final response = await dataSource.sendMessage(prompt);
+      final response = await dataSource.sendMessage(messages);
       if (response.isSuccess && response.data != null) {
         final model = response.data!;
         final GeminiResponse entity = GeminiResponse(text: model.text);

@@ -3,7 +3,7 @@ import 'package:my_chat_app/app/modules/chat/chat_exports.dart';
 import 'package:my_chat_app/app/app_exports.dart';
 
 class ApiClient {
-  Future<ApiResponse> sendToGemini(String prompt) async {
+  Future<ApiResponse> sendToGemini(List<ChatMessageEntity> messages) async {
     try {
       final String apiKey = GeminiConstants.apiKey;
 
@@ -12,15 +12,7 @@ class ApiClient {
       }
 
       final Uri uri = Uri.parse("${GeminiConstants.baseUrl}?key=$apiKey");
-      final Map<String, dynamic> body = {
-        "contents": [
-          {
-            "parts": [
-              {"text": prompt},
-            ],
-          },
-        ],
-      };
+      final body = {"contents": messages.map((m) => m.toGeminiMap()).toList()};
 
       final response = await http.post(
         uri,

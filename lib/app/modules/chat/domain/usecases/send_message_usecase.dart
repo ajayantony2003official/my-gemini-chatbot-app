@@ -5,8 +5,8 @@ class SendMessageUseCase {
 
   SendMessageUseCase(this.repository);
 
-  Future<ApiResponse<GeminiResponse>> call(String prompt) {
-    return repository.sendMessage(prompt);
+  Future<ApiResponse<GeminiResponse>> call(List<ChatMessageEntity> messages) {
+    return repository.sendMessage(messages);
   }
 
   Stream<String> callStream(String prompt) {
